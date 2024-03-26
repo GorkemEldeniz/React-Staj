@@ -1,9 +1,11 @@
-import Sun from "../../public/icons/wheather/sun-clear.svg";
+import ClearDay from "@/assets/background/clear-day.png";
+import SunIcon from "@/assets/icons/wheather/sun-clear.svg";
 
 export default function Test() {
 	return (
 		<>
-			<img src={Sun} />
+			<img src={ClearDay} alt='clear-day' />
+			<img src={SunIcon} alt='sun-icon' />
 			<h1 className='text-blue-light'>Heading</h1>
 			<p className='text-heading-hg'>Hello world!</p>
 			<p className='text-heading-xl'>Hello world!</p>
