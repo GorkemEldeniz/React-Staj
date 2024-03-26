@@ -1,4 +1,6 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
+import { createSearchParams, useNavigate } from "react-router-dom";
+
 interface OptionsProps {
 	filteredCities?: {
 		lon: string;
@@ -14,6 +16,8 @@ export default function Options({
 	setCity,
 	setIsLoading,
 }: OptionsProps) {
+	const navigate = useNavigate();
+
 	return (
 		<>
 			{filteredCities
@@ -22,6 +26,14 @@ export default function Options({
 							onClick={() => {
 								setCity(filteredCity.formatted);
 								setIsLoading(true);
+
+								navigate({
+									pathname: "weather",
+									search: createSearchParams({
+										lat: filteredCity.lat,
+										lon: filteredCity.lon,
+									}).toString(),
+								});
 							}}
 							className='block w-full py-4 pl-5 text-left text-gray-100 bg-gray-500 first-of-type:rounded-t-md last-of-type:rounded-b-md text-md'
 							key={index}

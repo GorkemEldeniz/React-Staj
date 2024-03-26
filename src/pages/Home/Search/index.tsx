@@ -2,7 +2,7 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useDebounce } from "use-debounce";
-import { Input } from "../ui/input";
+import { Input } from "../../../components/ui/input";
 import Options from "./Options";
 
 export default function SearchInput() {

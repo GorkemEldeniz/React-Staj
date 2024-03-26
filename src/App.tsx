@@ -1,15 +1,32 @@
-import Header from "./components/Header";
-import Hero from "./components/Hero";
-import SearchInput from "./components/Search";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Layout from "./components/Layout";
+import Home from "./pages/Home";
+import NotFound from "./pages/NotFound";
+import Weather from "./pages/Weather";
+
+const router = createBrowserRouter([
+	{
+		path: "/",
+		element: <Layout />,
+		children: [
+			{
+				index: true,
+				element: <Home />,
+			},
+			{
+				path: "weather",
+				element: <Weather />,
+			},
+			{
+				path: "*",
+				element: <NotFound />,
+			},
+		],
+	},
+]);
 
 function App() {
-	return (
-		<div className='w-full h-screen px-8 mx-auto max-w-screen-mobile bg-image'>
-			<Header />
-			<Hero />
-			<SearchInput />
-		</div>
-	);
+	return <RouterProvider router={router} />;
 }
 
 export default App;
