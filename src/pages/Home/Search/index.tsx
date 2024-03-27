@@ -33,7 +33,7 @@ export default function SearchInput() {
 				return;
 			}
 
-			url.searchParams.append("text", debouncedValue);
+			url.searchParams.append("text", debouncedValue.toLocaleUpperCase("en"));
 			try {
 				const { data } = await axios.get(url.href);
 
@@ -76,17 +76,16 @@ export default function SearchInput() {
 				className='truncate'
 				type='text'
 			/>
-			<div className='space-y-[1px] mt-2 max-h-[400px] overflow-y-scroll'>
-				{!filteredCities?.some(
-					(filteredCity) => filteredCity.formatted === city
-				) ? (
-					<Options
-						setCity={setCity}
-						filteredCities={filteredCities}
-						setIsLoading={setIsLoading}
-					/>
-				) : undefined}
-			</div>
+
+			{!filteredCities?.some(
+				(filteredCity) => filteredCity.formatted === city
+			) ? (
+				<Options
+					setCity={setCity}
+					filteredCities={filteredCities}
+					setIsLoading={setIsLoading}
+				/>
+			) : undefined}
 		</div>
 	);
 }

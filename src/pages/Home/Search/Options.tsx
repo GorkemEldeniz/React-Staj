@@ -19,7 +19,7 @@ export default function Options({
 	const navigate = useNavigate();
 
 	return (
-		<>
+		<div className='space-y-[1px] mt-2 max-h-[400px] overflow-y-auto'>
 			{filteredCities
 				? filteredCities.map((filteredCity, index) => (
 						<button
@@ -35,13 +35,13 @@ export default function Options({
 									}).toString(),
 								});
 							}}
-							className='block w-full py-4 pl-5 text-left text-gray-100 bg-gray-500 first-of-type:rounded-t-md last-of-type:rounded-b-md text-md'
+							className='block w-full px-5 py-4 text-left text-gray-100 bg-gray-500 first-of-type:rounded-t-md last-of-type:rounded-b-md text-md'
 							key={index}
 						>
 							{filteredCity.formatted}
 						</button>
 				  ))
 				: undefined}
-		</>
+		</div>
 	);
 }
