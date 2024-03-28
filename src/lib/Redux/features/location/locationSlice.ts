@@ -1,30 +1,27 @@
+import type { Root as WeatherState } from "@/pages/Home/Weather/type";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
 
-export interface LocationState {
-	name: string;
-	lat: number;
-	lon: number;
-	country: string;
-	state: string;
+interface RootState {
+	weather?: WeatherState;
 }
 
-const initialState: Partial<LocationState> = {
-	name: undefined,
+const initialState: RootState = {
+	weather: undefined,
 };
 
-export const locationSlice = createSlice({
-	name: "location",
+export const weatherSlice = createSlice({
+	name: "weather",
 	initialState,
 	reducers: {
-		setLocation: (state, action: PayloadAction<LocationState>) => {
-			state = action.payload;
+		setWeather: (state, action: PayloadAction<WeatherState>) => {
+			state.weather = action.payload;
 			return state;
 		},
 	},
 });
 
 // Action creators are generated for each case reducer function
-export const { setLocation } = locationSlice.actions;
+export const { setWeather } = weatherSlice.actions;
 
-export default locationSlice.reducer;
+export default weatherSlice.reducer;

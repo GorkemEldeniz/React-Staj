@@ -1,8 +1,8 @@
-import { useLocation } from "@/hooks/useLocation";
+import { useWeather } from "@/hooks/useWeather";
 import SearchWrapper from "./Search";
 import WeatherWrapper from "./Weather";
 
 export default function Home() {
-	const isLocationExist = useLocation()?.name;
+	const isLocationExist = useWeather()?.city;
 	return <>{!isLocationExist ? <SearchWrapper /> : <WeatherWrapper />}</>;
 }
