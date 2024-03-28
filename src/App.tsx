@@ -1,8 +1,9 @@
+import { Provider } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Layout from "./components/Layout";
+import { store } from "./lib/Redux/store";
 import Home from "./pages/Home";
+import Layout from "./pages/Layout";
 import NotFound from "./pages/NotFound";
-import Weather from "./pages/Weather";
 
 const router = createBrowserRouter([
 	{
@@ -14,10 +15,6 @@ const router = createBrowserRouter([
 				element: <Home />,
 			},
 			{
-				path: "weather",
-				element: <Weather />,
-			},
-			{
 				path: "*",
 				element: <NotFound />,
 			},
@@ -26,7 +23,11 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-	return <RouterProvider router={router} />;
+	return (
+		<Provider store={store}>
+			<RouterProvider router={router} />
+		</Provider>
+	);
 }
 
 export default App;

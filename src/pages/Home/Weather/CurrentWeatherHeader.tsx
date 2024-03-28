@@ -2,7 +2,6 @@ import {
 	convertDateToReadableFormat,
 	getTimePeriodBasedOnSunset,
 } from "@/helpers";
-import Image from "./Image";
 import { imagesMap } from "./images-map";
 import type { Root } from "./type";
 
@@ -28,7 +27,7 @@ export default function CurrentWeatherHeader({
 
 	return (
 		<section className='relative p-3 rounded-md'>
-			<Image
+			<img
 				className='absolute inset-0 w-full h-full'
 				src={matchedImage?.image_path}
 				alt={matchedImage?.weather}
@@ -50,7 +49,7 @@ export default function CurrentWeatherHeader({
 					</p>
 				</div>
 
-				<Image
+				<img
 					className='w-[10rem] h-[10rem] relative'
 					src={matchedImage?.icon_path}
 					alt={matchedImage?.weather}

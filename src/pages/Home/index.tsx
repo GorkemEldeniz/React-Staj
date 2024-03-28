@@ -1,13 +1,8 @@
-import Header from "./Header";
-import Hero from "./Hero";
-import SearchInput from "./Search";
+import { useLocation } from "@/hooks/useLocation";
+import SearchWrapper from "./Search";
+import WeatherWrapper from "./Weather";
 
 export default function Home() {
-	return (
-		<div className='w-full h-full px-8'>
-			<Header />
-			<Hero />
-			<SearchInput />
-		</div>
-	);
+	const isLocationExist = useLocation()?.name;
+	return <>{!isLocationExist ? <SearchWrapper /> : <WeatherWrapper />}</>;
 }

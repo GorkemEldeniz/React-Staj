@@ -27,7 +27,7 @@ export default function CurrentWeatherContent({
 					<CloudRain className='fill-gray-500' size={24} />
 					<span>Probability of rain</span>
 					<span className='ml-auto'>
-						{Math.ceil(currentWeatherData?.rain) || "0"}&#37;
+						{Math.ceil(currentWeatherData?.pop * 100) || "0"}&#37;
 					</span>
 				</li>
 				<li className='flex items-center justify-between gap-3 py-4 border-b-[1px] border-b-gray-600'>
