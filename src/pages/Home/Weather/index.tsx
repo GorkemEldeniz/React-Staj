@@ -11,7 +11,7 @@ export default function WeatherWrapper() {
 	const currentWeatherData = weatherData?.list[0];
 
 	return (
-		<div className='p-2 space-y-2'>
+		<div className='p-2 space-y-2 bg-gray-900'>
 			<CurrentWeatherHeader weatherData={weatherData} />
 			<CurrentWeatherContent currentWeatherData={currentWeatherData} />
 			<WeatherForecastList
