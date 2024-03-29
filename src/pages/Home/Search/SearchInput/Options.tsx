@@ -1,15 +1,18 @@
+import { UseFormSetValue } from "react-hook-form";
 import type { Root } from ".";
 
 /* eslint-disable no-mixed-spaces-and-tabs */
 interface OptionsProps {
 	filteredCities?: Root[];
-	setCity: React.Dispatch<React.SetStateAction<string>>;
+	setValue: UseFormSetValue<{
+		city: string;
+	}>;
 	submitButtonRef: React.RefObject<HTMLButtonElement>;
 }
 
 export default function Options({
 	filteredCities,
-	setCity,
+	setValue,
 	submitButtonRef,
 }: OptionsProps) {
 	return (
@@ -18,7 +21,7 @@ export default function Options({
 				? filteredCities.map((filteredCity, index) => (
 						<button
 							onClick={() => {
-								setCity(filteredCity.name);
+								setValue("city", filteredCity.name);
 								submitButtonRef.current?.click();
 							}}
 							type='button'

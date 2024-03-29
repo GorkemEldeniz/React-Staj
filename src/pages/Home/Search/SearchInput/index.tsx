@@ -1,10 +1,12 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { Input } from "@/components/ui/input";
 import { setWeather } from "@/lib/Redux/features/location/locationSlice";
-import axios from "axios";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useDebounce } from "use-debounce";
+import * as z from "zod";
 import Options from "./Options";
 import { fetchGeocodeData, fetchWeatherData } from "./action";
 
@@ -16,93 +18,91 @@ export interface Root {
 	state: string;
 }
 
+const formDataSchema = z.object({
+	city: z.string().min(1).max(22),
+});
+
+type FormData = z.infer<typeof formDataSchema>;
+
 export default function SearchInput() {
-	const [isLoading, setIsLoading] = useState(false);
-	const [error, setError] = useState<undefined | string>(undefined);
-	const [city, setCity] = useState("");
+	const dispatch = useDispatch();
+	const {
+		register,
+		handleSubmit,
+		watch,
+		formState: { isSubmitting, errors },
+		setValue,
+		setError,
+		setFocus,
+	} = useForm<FormData>({
+		resolver: zodResolver(formDataSchema),
+		shouldFocusError: true,
+	});
+
+	const city = watch("city");
+
 	const [debouncedValue] = useDebounce(city, 300);
 	const [filteredCities, setFilteredCities] = useState<Root[] | undefined>(
 		undefined
 	);
-	const inputRef = useRef<HTMLInputElement>(null);
+
 	const submitButtonRef = useRef<HTMLButtonElement>(null);
 
-	const dispatch = useDispatch();
+	const onSubmit = async (data: FormData) => {
+		const { city } = data;
 
-	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		setIsLoading(true);
-		const target = e.currentTarget;
-		const inputCity = target.city.value;
-		// !TODO: validation react hook form?
+		const { data: geocodeData } = await fetchGeocodeData(city);
 
-		try {
-			const { data: geocodeData } = await fetchGeocodeData(inputCity);
-			const { lat, lon } = geocodeData[0];
-			if (!lat || !lon) {
-				setError("No location found");
-				return;
-			}
-
-			const { data: weatherData } = await fetchWeatherData(lat, lon);
-			if (!weatherData.city) {
-				setError("No location found");
-				return;
-			}
-
-			dispatch(setWeather(weatherData));
-		} catch (error) {
-			setIsLoading(false);
-			if (axios.isAxiosError(error)) {
-				setError(error.response?.data?.message);
-			} else {
-				setError("Error occurs!");
-			}
-		} finally {
-			setIsLoading(false);
+		if (!geocodeData || !geocodeData.length) {
+			setError("city", {
+				message: "No location found!!",
+			});
+			return;
 		}
+
+		const { lat, lon } = geocodeData[0];
+
+		const { data: weatherData } = await fetchWeatherData(lat, lon);
+
+		if (!Object.keys(weatherData).length) {
+			setError("city", {
+				message: "No weather information found!!",
+			});
+			return;
+		}
+
+		dispatch(setWeather(weatherData));
 	};
 
 	useEffect(() => {
+		setFocus("city");
 		async function fetchAutoCompleteData() {
-			if (!debouncedValue.length) {
+			if (!debouncedValue || !debouncedValue.length) {
 				setFilteredCities(undefined);
 				return;
 			}
 
-			try {
-				const { data: geocodeData } = await fetchGeocodeData(debouncedValue);
-				setFilteredCities(geocodeData);
-			} catch (error) {
-				if (axios.isAxiosError(error)) {
-					setError(error.response?.data?.message);
-				} else {
-					setError("Error occurs!");
-				}
-			}
+			const { data: geocodeData } = await fetchGeocodeData(debouncedValue);
+			setFilteredCities(geocodeData);
 		}
 		fetchAutoCompleteData();
 	}, [debouncedValue]);
 
 	return (
-		<form action='' className='relative' onSubmit={handleSubmit}>
+		<form action='' className='relative' onSubmit={handleSubmit(onSubmit)}>
 			<Input
-				ref={inputRef}
-				value={city}
-				onChange={(e) => {
-					setCity(e.target.value);
-					setError(undefined);
-				}}
-				name='city'
-				error={error}
-				isLoading={isLoading}
+				{...register("city", {
+					required: true,
+				})}
+				error={errors.city?.message}
+				isLoading={isSubmitting}
+				placeholder='Search location'
 				className='truncate'
-				type='text'
 			/>
 
-			{!isLoading ? (
+			{!isSubmitting ? (
 				<Options
-					setCity={setCity}
+					setValue={setValue}
 					filteredCities={filteredCities}
 					submitButtonRef={submitButtonRef}
 				/>

@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
 const inputVariants = cva(
-	"w-full rounded-md py-[17px] px-5 bg-[#1E1E29] text-gray-100 text-md placeholder:text-gray-400"
+	"w-full rounded-md py-[17px] px-5 bg-[#1E1E29] text-gray-100 text-md placeholder:text-gray-400 focus:outline-none"
 );
 
 export interface InputProps
@@ -22,11 +22,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 				<input
 					className={cn(inputVariants({ className }), {
 						"text-gray-400": isLoading,
-						"border border-red-400 focus:outline-none": !!error,
+						"border border-red-400": !!error,
 					})}
 					ref={ref}
-					placeholder='Search location'
-					disabled={isLoading}
 					{...props}
 				/>
 				<SpinnerGap
