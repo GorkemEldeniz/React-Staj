@@ -5,11 +5,7 @@ import {
 import { imagesMap } from "./images-map";
 import type { Root } from "./type";
 
-export default function CurrentWeatherHeader({
-	weatherData,
-}: {
-	weatherData: Root;
-}) {
+export default function WeatherHeader({ weatherData }: { weatherData: Root }) {
 	const { temp, dt, weather, sunset } = weatherData.list[0];
 	const { main, description } = weather[0];
 
@@ -17,7 +13,7 @@ export default function CurrentWeatherHeader({
 	const adjustedLocalDateTime = new Date(
 		dt * 1000 + weatherData.city.timezone * 1000
 	);
-	const readabledDate = convertDateToReadableFormat(adjustedLocalDateTime);
+	const readableDate = convertDateToReadableFormat(adjustedLocalDateTime);
 	const matchedImage = imagesMap.find(
 		({ weather, descriptions, period }) =>
 			weather === main &&
@@ -36,7 +32,7 @@ export default function CurrentWeatherHeader({
 				<h2 className='text-heading-sm'>
 					{weatherData.city.name}, {weatherData.city.country}
 				</h2>
-				<p className='text-xs'>{readabledDate}</p>
+				<p className='text-xs'>{readableDate}</p>
 			</header>
 			<div className='relative z-10 flex justify-between'>
 				<div className='pt-6 pb-4 pl-4 text-white'>

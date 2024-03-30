@@ -8,7 +8,7 @@ import {
 } from "@phosphor-icons/react";
 import type { List } from "./type";
 
-export default function CurrentWeatherContent({
+export default function WeatherContent({
 	currentWeatherData,
 }: {
 	currentWeatherData: List;

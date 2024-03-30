@@ -1,7 +1,7 @@
 import { useWeather } from "@/hooks/useWeather";
-import CurrentWeatherContent from "./CurrentWeatherContent";
-import CurrentWeatherHeader from "./CurrentWeatherHeader";
+import WeatherContent from "./WeatherContent";
 import WeatherForecastList from "./WeatherForecastList";
+import WeatherHeader from "./WeatherHeader";
 
 export default function WeatherWrapper() {
 	const weatherData = useWeather();
@@ -11,9 +11,9 @@ export default function WeatherWrapper() {
 	const currentWeatherData = weatherData?.list[0];
 
 	return (
-		<div className='p-2 space-y-2 bg-gray-900'>
-			<CurrentWeatherHeader weatherData={weatherData} />
-			<CurrentWeatherContent currentWeatherData={currentWeatherData} />
+		<div className='min-h-screen p-2 space-y-2 bg-gray-900'>
+			<WeatherHeader weatherData={weatherData} />
+			<WeatherContent currentWeatherData={currentWeatherData} />
 			<WeatherForecastList
 				timezone={weatherData.city.timezone}
 				list={weatherData.list}

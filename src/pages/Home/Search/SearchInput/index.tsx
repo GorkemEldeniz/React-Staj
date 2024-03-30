@@ -94,19 +94,21 @@ export default function SearchInput() {
 				{...register("city", {
 					required: true,
 				})}
+				autoComplete='off'
 				error={errors.city?.message}
 				isLoading={isSubmitting}
 				placeholder='Search location'
 				className='truncate'
 			/>
-
-			{!isSubmitting ? (
-				<Options
-					setValue={setValue}
-					filteredCities={filteredCities}
-					submitButtonRef={submitButtonRef}
-				/>
-			) : undefined}
+			<div className='space-y-[1px] mt-2 overflow-y-auto'>
+				{!isSubmitting && filteredCities ? (
+					<Options
+						setValue={setValue}
+						filteredCities={filteredCities}
+						submitButtonRef={submitButtonRef}
+					/>
+				) : undefined}
+			</div>
 			<button ref={submitButtonRef} type='submit' className='sr-only'>
 				Submit
 			</button>
