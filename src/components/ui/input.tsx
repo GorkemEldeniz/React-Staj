@@ -12,21 +12,22 @@ export interface InputProps
 	extends React.InputHTMLAttributes<HTMLInputElement>,
 		VariantProps<typeof inputVariants> {
 	isLoading?: boolean;
-	error?: string;
+	error?: boolean;
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 	({ className, error, isLoading = false, ...props }, ref) => {
 		return (
-			<div className='relative'>
+			<div className='relative w-full'>
 				<input
 					className={cn(inputVariants({ className }), {
 						"text-gray-400": isLoading,
-						"border border-red-400": !!error,
+						"border border-red-400": error,
 					})}
 					ref={ref}
 					{...props}
 				/>
+
 				<SpinnerGap
 					className={cn(
 						"absolute invisible opacity-0 top-3 right-3 fill-blue-light size-8 animate-spin",
@@ -35,7 +36,6 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 						}
 					)}
 				/>
-				{error ? <p className='mt-2 text-red-200'>{error}</p> : undefined}
 			</div>
 		);
 	}

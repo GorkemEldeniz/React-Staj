@@ -2,6 +2,8 @@
 import { Input } from "@/components/ui/input";
 import { setWeather } from "@/lib/Redux/features/location/locationSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Crosshair } from "@phosphor-icons/react";
+import { useGeolocation } from "@uidotdev/usehooks";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -30,7 +32,7 @@ export default function SearchInput() {
 		register,
 		handleSubmit,
 		watch,
-		formState: { isSubmitting, errors },
+		formState: { isSubmitting, errors, isValid, isSubmitted },
 		setValue,
 		setError,
 		setFocus,
@@ -41,16 +43,37 @@ export default function SearchInput() {
 
 	const city = watch("city");
 
+	const {
+		loading,
+		latitude,
+		longitude,
+		error: geoLocationError,
+	} = useGeolocation();
 	const [debouncedValue] = useDebounce(city, 300);
 	const [filteredCities, setFilteredCities] = useState<Root[] | undefined>(
 		undefined
 	);
 
 	const submitButtonRef = useRef<HTMLButtonElement>(null);
+	const handleCurrentLocation = async () => {
+		if (geoLocationError || !latitude || !longitude) {
+			console.log(geoLocationError?.message);
+			return;
+		}
+		const { data: weatherData } = await fetchWeatherData(latitude, longitude);
+
+		if (!weatherData) {
+			setError("city", {
+				message: "No weather information found!!",
+			});
+			return;
+		}
+
+		dispatch(setWeather(weatherData));
+	};
 
 	const onSubmit = async (data: FormData) => {
 		const { city } = data;
-
 		const { data: geocodeData } = await fetchGeocodeData(city);
 
 		if (!geocodeData || !geocodeData.length) {
@@ -61,10 +84,9 @@ export default function SearchInput() {
 		}
 
 		const { lat, lon } = geocodeData[0];
-
 		const { data: weatherData } = await fetchWeatherData(lat, lon);
 
-		if (!Object.keys(weatherData).length) {
+		if (!weatherData) {
 			setError("city", {
 				message: "No weather information found!!",
 			});
@@ -89,17 +111,35 @@ export default function SearchInput() {
 	}, [debouncedValue]);
 
 	return (
-		<form action='' className='relative' onSubmit={handleSubmit(onSubmit)}>
-			<Input
-				{...register("city", {
-					required: true,
-				})}
-				autoComplete='off'
-				error={errors.city?.message}
-				isLoading={isSubmitting}
-				placeholder='Search location'
-				className='truncate'
-			/>
+		<form action='' onSubmit={handleSubmit(onSubmit)}>
+			<div className='flex items-center gap-2'>
+				<Input
+					{...register("city", {
+						required: true,
+					})}
+					autoComplete='off'
+					error={!isValid && isSubmitted}
+					isLoading={isSubmitting}
+					placeholder='Search location'
+					className='truncate'
+				/>
+
+				{!geoLocationError?.message ? (
+					<button
+						type='button'
+						disabled={loading || isSubmitting}
+						onClick={handleCurrentLocation}
+						className='py-2 text-gray-100 disabled:opacity-70'
+					>
+						<Crosshair size={24} />
+					</button>
+				) : undefined}
+			</div>
+
+			{!isValid && isSubmitted ? (
+				<p className='mt-2 text-red-200'>{errors.city?.message}</p>
+			) : undefined}
+
 			<div className='space-y-[1px] mt-2 overflow-y-auto'>
 				{!isSubmitting && filteredCities ? (
 					<Options
