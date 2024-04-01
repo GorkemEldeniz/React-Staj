@@ -4,6 +4,7 @@ import {
 } from "@/helpers";
 import { useWeather } from "@/hooks/useWeather";
 import { Navigate } from "react-router-dom";
+import DetailFooter from "./Footer";
 import Header from "./Header";
 import HumidityChart from "./HumidityChart";
 import TempChart from "./TempChart";
@@ -39,6 +40,7 @@ export default function Detail() {
 			<TempChart tempForecastList={tempForecastList} />
 			<HumidityChart humidityForecastList={humidityForecastList} />
 			<WindSpeedChart windSpeedList={windSpeedList} />
+			<DetailFooter />
 		</main>
 	);
 }

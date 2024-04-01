@@ -14,7 +14,7 @@ export default function WeatherForecastList({
 
 	return (
 		<section className='bg-gray-700 rounded-md'>
-			<ol className='flex p-3'>
+			<ol className='flex justify-between p-3'>
 				{list.map((l, index) => (
 					<li key={index} className='px-[5.5px] py-[14px] text-center'>
 						<h3 className='text-gray-200 text-heading-xs'>{days[index]}</h3>

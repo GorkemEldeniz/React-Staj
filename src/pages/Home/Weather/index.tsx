@@ -12,7 +12,7 @@ export default function WeatherWrapper() {
 	const currentWeatherData = weatherData?.list[0];
 
 	return (
-		<main className='p-2 space-y-2 bg-gray-900'>
+		<main className='min-h-screen p-2 space-y-2 bg-gray-900'>
 			<WeatherHeader weatherData={weatherData} />
 			<WeatherContent currentWeatherData={currentWeatherData} />
 			<WeatherForecastList

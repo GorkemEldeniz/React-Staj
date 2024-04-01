@@ -8,7 +8,7 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "git:fix": "git add . && git commit -m 'hot fix' && git push"
+    "git:fix": "git add . && git commit -m 'fix' && git push"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",

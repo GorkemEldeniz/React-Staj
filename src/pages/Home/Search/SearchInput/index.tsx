@@ -2,7 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { setWeather } from "@/lib/Redux/features/location/locationSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Crosshair } from "@phosphor-icons/react";
+import { GpsFix } from "@phosphor-icons/react";
 import { useGeolocation } from "@uidotdev/usehooks";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -129,9 +129,9 @@ export default function SearchInput() {
 						type='button'
 						disabled={loading || isSubmitting}
 						onClick={handleCurrentLocation}
-						className='py-2 text-gray-100 disabled:opacity-70'
+						className='p-4 text-gray-100 bg-gray-700 rounded-md cursor-pointer disabled:opacity-70'
 					>
-						<Crosshair size={24} />
+						<GpsFix size={24} />
 					</button>
 				) : undefined}
 			</div>
