@@ -8,9 +8,7 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "git:fix": "git add . && git commit -m 'fix' && git push",
-    "predeploy": "pnpm run build",
-    "deploy": "gh-pages -d dist"
+    "git:fix": "git add . && git commit -m 'fix' && git push"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
@@ -41,7 +39,6 @@
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
-    "gh-pages": "^6.1.1",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.2.2",
