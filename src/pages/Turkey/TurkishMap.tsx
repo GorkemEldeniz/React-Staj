@@ -2,7 +2,7 @@ import { setWeather } from "@/lib/Redux/features/location/locationSlice";
 import { cn } from "@/lib/utils";
 import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
 	fetchGeocodeData,
 	fetchWeatherData,
@@ -23,6 +23,7 @@ export default function TurkishMap() {
 	const elementRef = useRef<HTMLDivElement>(null);
 
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
 	const hoveredCity = hoveredIndex
 		? provinceDataList.at(hoveredIndex)?.name
@@ -45,7 +46,7 @@ export default function TurkishMap() {
 		}
 
 		dispatch(setWeather(weatherData));
-		redirect("/");
+		navigate("/");
 	};
 
 	const handleMouseMove = (e: React.MouseEvent) => {
