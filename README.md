@@ -64,4 +64,4 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Görkem Eldeniz - gorkemeldeniz30@gmail.com
 
-Deployed Project Link: [https://react-staj-git-main-gorkemeldeniz.vercel.app/](https://react-staj-git-main-gorkemeldeniz.vercel.app/)
+Deployed Project Link: [https://react-staj.vercel.app/](https://react-staj.vercel.app/)

@@ -20,7 +20,7 @@ export default function WeatherForecastList({
 						<h3 className='text-gray-200 text-heading-xs'>{days[index]}</h3>
 						<img
 							className='size-14'
-							src={`http://openweathermap.org/img/w/${l.weather[0].icon}.png`}
+							src={`https://openweathermap.org/img/w/${l.weather[0].icon}.png`}
 							alt=''
 						/>
 						<div className='text-heading-xs'>
