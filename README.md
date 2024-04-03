@@ -7,10 +7,10 @@
 It is an application that visualizes weather data using [openweather api](https://openweathermap.org/) according to user inputs
 
 <div style="display:flex;gap:2px">
-  <img style='height:50vh' alt='home' src='public/home.png'/>
-  <img style='height:50vh' alt='autocomplete' src='public/autocomplete.png'/>
-  <img style='height:50vh' alt='loading' src='public/loading.png'/>
-  <img style='height:50vh' alt='search' src='public/search.png'/>
+  <img style='height:50vh' alt='autocomplete' src='https://utfs.io/f/1c43f202-df81-4405-b639-8c45b1aa2647-1wrmn.png'/>
+  <img style='height:50vh' alt='search' src='https://utfs.io/f/0db75c69-da81-43cc-ae98-9bd1e095e8b8-duw4d4.png'/>
+  <img style='height:50vh' alt='loading' src='https://utfs.io/f/32a44f37-b41a-4739-a842-8b49dab97305-5kfl8c.png'/>
+  <img style='height:50vh' alt='home' src='https://utfs.io/f/e0c35d9e-3284-4c2c-8cd2-3700f64ef501-ezlxzs.png'/>
 </div>
 
 ### Built With
