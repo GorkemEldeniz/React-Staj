@@ -3,11 +3,10 @@ import { Input } from "@/components/ui/input";
 import { setWeather } from "@/lib/Redux/features/location/locationSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GpsFix } from "@phosphor-icons/react";
-import { useGeolocation } from "@uidotdev/usehooks";
+import { useDebounce, useGeolocation } from "@uidotdev/usehooks";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { useDebounce } from "use-debounce";
 import * as z from "zod";
 import Options from "./Options";
 import { fetchGeocodeData, fetchWeatherData } from "./action";
@@ -49,7 +48,7 @@ export default function SearchInput() {
 		longitude,
 		error: geoLocationError,
 	} = useGeolocation();
-	const [debouncedValue] = useDebounce(city, 300);
+	const debouncedValue = useDebounce(city, 300);
 	const [filteredCities, setFilteredCities] = useState<Root[] | undefined>(
 		undefined
 	);
