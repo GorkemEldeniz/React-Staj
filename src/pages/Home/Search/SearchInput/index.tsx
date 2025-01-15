@@ -8,15 +8,19 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import * as z from "zod";
-import Options from "./Options";
-import { fetchGeocodeData, fetchWeatherData } from "./action";
+import Options, { LocationOption } from "../Options";
+import {
+	fetchGeocodeData,
+	fetchReverseGeocode,
+	fetchWeatherData,
+} from "./action";
 
 export interface Root {
 	name: string;
-	lat: number;
-	lon: number;
+	latitude: number;
+	longitude: number;
 	country: string;
-	state: string;
+	admin1?: string;
 }
 
 const formDataSchema = z.object({
@@ -27,130 +31,135 @@ type FormData = z.infer<typeof formDataSchema>;
 
 export default function SearchInput() {
 	const dispatch = useDispatch();
+	const [isLoading, setIsLoading] = useState(false);
+	const [filteredCities, setFilteredCities] = useState<LocationOption[]>();
+	const optionsRef = useRef<HTMLDivElement>(null);
+	const { latitude, longitude } = useGeolocation();
+
 	const {
 		register,
-		handleSubmit,
 		watch,
-		formState: { isSubmitting, errors, isValid, isSubmitted },
-		setValue,
-		setError,
-		setFocus,
+		formState: { errors },
 	} = useForm<FormData>({
 		resolver: zodResolver(formDataSchema),
-		shouldFocusError: true,
 	});
 
-	const city = watch("city");
-
-	const {
-		loading,
-		latitude,
-		longitude,
-		error: geoLocationError,
-	} = useGeolocation();
-	const debouncedValue = useDebounce(city, 300);
-	const [filteredCities, setFilteredCities] = useState<Root[] | undefined>(
-		undefined
-	);
-
-	const submitButtonRef = useRef<HTMLButtonElement>(null);
-	const handleCurrentLocation = async () => {
-		if (geoLocationError || !latitude || !longitude) {
-			console.log(geoLocationError?.message);
-			return;
-		}
-		const { data: weatherData } = await fetchWeatherData(latitude, longitude);
-
-		if (!weatherData) {
-			setError("city", {
-				message: "No weather information found!!",
-			});
-			return;
-		}
-
-		dispatch(setWeather(weatherData));
-	};
-
-	const onSubmit = async (data: FormData) => {
-		const { city } = data;
-		const { data: geocodeData } = await fetchGeocodeData(city);
-
-		if (!geocodeData || !geocodeData.length) {
-			setError("city", {
-				message: "No location found!!",
-			});
-			return;
-		}
-
-		const { lat, lon } = geocodeData[0];
-		const { data: weatherData } = await fetchWeatherData(lat, lon);
-
-		if (!weatherData) {
-			setError("city", {
-				message: "No weather information found!!",
-			});
-			return;
-		}
-
-		dispatch(setWeather(weatherData));
-	};
+	const debouncedValue = useDebounce(watch("city"), 500);
 
 	useEffect(() => {
-		setFocus("city");
 		async function fetchAutoCompleteData() {
-			if (!debouncedValue || !debouncedValue.length) {
+			if (!debouncedValue) {
 				setFilteredCities(undefined);
 				return;
 			}
 
-			const { data: geocodeData } = await fetchGeocodeData(debouncedValue);
-			setFilteredCities(geocodeData);
+			const geocodeData = await fetchGeocodeData(debouncedValue);
+
+			if (!geocodeData?.length) {
+				setFilteredCities([]);
+				return;
+			}
+
+			setFilteredCities(
+				geocodeData.map((d: Root) => ({
+					label: `${d.name}, ${d.admin1 || ""}, ${d.country}`,
+					value: d,
+				}))
+			);
 		}
 		fetchAutoCompleteData();
 	}, [debouncedValue]);
 
+	const handleOptionClick = async (option: LocationOption) => {
+		setIsLoading(true);
+
+		try {
+			const weatherData = await fetchWeatherData(
+				option.value.latitude,
+				option.value.longitude
+			);
+
+			if (!weatherData) {
+				setIsLoading(false);
+				return;
+			}
+
+			// Fill in city data from geocoding
+			weatherData.city.name = option.value.name;
+			weatherData.city.country = option.value.country;
+
+			dispatch(setWeather(weatherData));
+		} catch (error) {
+			console.error("Error fetching weather data:", error);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	const handleGeoLocationClick = async () => {
+		if (!latitude || !longitude) return;
+
+		setIsLoading(true);
+
+		try {
+			const location = await fetchReverseGeocode(latitude, longitude);
+
+			if (!location) {
+				console.error("Could not find location data");
+				setIsLoading(false);
+				return;
+			}
+
+			const weatherData = await fetchWeatherData(latitude, longitude);
+
+			if (!weatherData) {
+				setIsLoading(false);
+				return;
+			}
+
+			// Fill in city data from reverse geocoding
+			weatherData.city.name = location.name;
+			weatherData.city.country = location.country;
+
+			dispatch(setWeather(weatherData));
+		} catch (error) {
+			console.error("Error fetching weather data:", error);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
 	return (
-		<form action='' onSubmit={handleSubmit(onSubmit)}>
-			<div className='flex items-center gap-2'>
+		<div className='relative'>
+			<div className='flex gap-2'>
 				<Input
-					{...register("city", {
-						required: true,
-					})}
-					autoComplete='off'
-					error={!isValid && isSubmitted}
-					isLoading={isSubmitting}
-					placeholder='Search location'
-					className='truncate'
+					{...register("city")}
+					className='text-gray-100 bg-gray-700'
+					placeholder='Search for a city...'
+					disabled={isLoading}
 				/>
-
-				{!geoLocationError?.message ? (
-					<button
-						type='button'
-						disabled={loading || isSubmitting}
-						onClick={handleCurrentLocation}
-						className='p-4 text-gray-100 bg-gray-700 rounded-md cursor-pointer disabled:opacity-70'
-					>
-						<GpsFix size={24} />
-					</button>
-				) : undefined}
+				<button
+					onClick={handleGeoLocationClick}
+					className='p-3 text-gray-100 bg-gray-700 rounded-md hover:opacity-50'
+				>
+					<GpsFix size={24} />
+				</button>
 			</div>
-
-			{!isValid && isSubmitted ? (
-				<p className='mt-2 text-red-200'>{errors.city?.message}</p>
-			) : undefined}
-
-			<div className='space-y-[1px] mt-2 overflow-y-auto'>
-				{!isSubmitting && filteredCities ? (
+			{errors.city && (
+				<span className='text-sm text-red-500'>{errors.city.message}</span>
+			)}
+			{filteredCities && (
+				<div
+					ref={optionsRef}
+					className='absolute z-10 w-full mt-2 overflow-hidden bg-gray-700 rounded-md'
+				>
 					<Options
-						setValue={setValue}
-						filteredCities={filteredCities}
-						submitButtonRef={submitButtonRef}
+						options={filteredCities}
+						onOptionClick={handleOptionClick}
+						isLoading={isLoading}
 					/>
-				) : undefined}
-			</div>
-			<button ref={submitButtonRef} type='submit' className='sr-only'>
-				Submit
-			</button>
-		</form>
+				</div>
+			)}
+		</div>
 	);
 }

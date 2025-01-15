@@ -29,24 +29,35 @@ export default function TurkishMap() {
 		? provinceDataList.at(hoveredIndex)?.name
 		: undefined;
 
-	const handleSetProvince = async (name: string) => {
-		const { data: geocodeData } = await fetchGeocodeData(name);
+	const handleProvinceClick = async (province: string) => {
+		try {
+			const geocodeData = await fetchGeocodeData(province + ", Turkey");
 
-		if (!geocodeData || !geocodeData.length) {
-			console.log("api error");
-			return;
+			if (!geocodeData?.length) {
+				console.error("No location found for province:", province);
+				return;
+			}
+
+			const location = geocodeData[0];
+			const weatherData = await fetchWeatherData(
+				location.latitude,
+				location.longitude
+			);
+
+			if (!weatherData) {
+				console.error("No weather data found for province:", province);
+				return;
+			}
+
+			// Fill in city data from geocoding
+			weatherData.city.name = location.name;
+			weatherData.city.country = location.country;
+
+			dispatch(setWeather(weatherData));
+			navigate("/");
+		} catch (error) {
+			console.error("Error fetching weather data:", error);
 		}
-
-		const { lat, lon } = geocodeData[0];
-		const { data: weatherData } = await fetchWeatherData(lat, lon);
-
-		if (!weatherData) {
-			console.log("api error");
-			return;
-		}
-
-		dispatch(setWeather(weatherData));
-		navigate("/");
 	};
 
 	const handleMouseMove = (e: React.MouseEvent) => {
@@ -89,7 +100,7 @@ export default function TurkishMap() {
 						})}
 						onMouseOver={() => setHoveredIndex(index)}
 						key={index}
-						onClick={() => handleSetProvince(name)}
+						onClick={() => handleProvinceClick(name)}
 					>
 						{paths.map((path, idx) => (
 							<path key={idx} d={path} />
